@@ -40,5 +40,5 @@ export function useWebsite () {
     }, [])
 
 
-    return websites
+    return {websites, refreshWebsites}
 }
