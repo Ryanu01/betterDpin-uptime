@@ -2,12 +2,15 @@ import express from "express";
 import { authMiddleware } from "./middleware";
 import { prismaClient } from "db/client";
 import cors from "cors";
+import { config } from "dotenv";
+config();
 const app = express();
 app.use(express.json())
 app.use(cors())
 app.post('/api/v1/website', authMiddleware, async (req, res) => {
     const userId = req.userId!;
     const { url } = req.body
+
 
     const data = await prismaClient.website.create({
         data: {
