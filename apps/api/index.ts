@@ -1,9 +1,10 @@
 import express from "express";
 import { authMiddleware } from "./middleware";
 import { prismaClient } from "db/client";
-
+import cors from "cors";
 const app = express();
 app.use(express.json())
+app.use(cors())
 app.post('/api/v1/website', authMiddleware, async (req, res) => {
     const userId = req.userId!;
     const { url } = req.body
@@ -72,4 +73,7 @@ app.delete('api/v1/website/', authMiddleware, async (req, res) => {
     })
 })
 
-app.listen(8080);
+app.listen(8080, () => {
+    console.log("SERVER RUNING AT PORT 8080");
+    
+});

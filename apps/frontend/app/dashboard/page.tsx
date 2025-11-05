@@ -2,9 +2,11 @@
 
 import { Appbar } from "@/components/Appbar";
 import { Button } from "@/components/ui/button";
+import { API_BACKEND_URL } from "@/config";
 import { useWebsite } from "@/hooks/useWebsites";
 import { useAuth } from "@clerk/nextjs";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import axios from "axios";
+import { ChevronDown, ChevronUp, Globe, Moon, Plus, Sun } from "lucide-react";
 import React, { useMemo, useState } from "react";
 
 type UptimeStatus = "good" | "bad" | "unknows";
@@ -34,15 +36,16 @@ function UptimeTicks({ticks}: {
     );
 }
 
-export default function CreateWebsiteModel({ isOpen, onClose }: {
+function CreateWebsiteModel({ isOpen, onClose }: {
     isOpen: boolean,
     onClose: (url: string | null) => void
 }) {
     const [url, setUrl] = useState('')
 
+    if(!isOpen) return null;
 
     return (
-        <div className="flex justify-center mt-20">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center mt-20">
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
                 <h2 className="text-xl font-semibold mb-4 dark:text-white">
                     Add New Website
@@ -181,5 +184,62 @@ function App () {
     }, [websites]);
 
 
-    
+    React.useEffect(() => {
+        if(isDarkMode) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.add('dark');
+        }
+    }, [isDarkMode])
+
+    return (
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+            <div className="nax-w-4xl mx-auto py-8 px-4">
+                <div className="flex items-center space-x-2">
+                    <div>
+                        <Globe className="w-8 h-8 text-blue-600"/>
+                        <h1 className="text-2xl font-bold text-gray-+00 dark:text-white">DPIN</h1>
+                    </div>
+                <div className="flex items-center space-x-4">
+                   
+                    <Button 
+                        onClick={() => setIsModelOpen(true)}
+                        className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                    >
+                        <Plus className="w-4 h-4"/>
+                        <span>Add Website</span>
+                    </Button>
+                </div>
+            </div>
+            <div className="space-y-4">
+                {processWebsites.map((website) => (
+                    <WebsiteCard key={website.id} website={website} />
+                ))}
+            </div>
+            </div>
+            <CreateWebsiteModel isOpen = {isModelOpen}
+                onClose={async (url) => {
+                    if(url === null) {
+                        setIsModelOpen(false)
+                        return;
+                    }
+                    const token = await getToken();
+                    setIsModelOpen(false)
+                    axios.post(`${API_BACKEND_URL}/api/v1/website`, {
+                        url,
+                    }, {
+                        headers: {
+                            Authorization: token
+                        }
+                    }).then(() => {
+                        refreshWebsites()
+                    })
+                    
+                }}
+            />
+        </div>
+
+    )
 }
+
+export default App;
