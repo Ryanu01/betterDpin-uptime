@@ -1,6 +1,5 @@
 "use client"
 
-import { Appbar } from "@/components/Appbar";
 import { Button } from "@/components/ui/button";
 import { API_BACKEND_URL } from "@/config";
 import { useWebsite } from "@/hooks/useWebsites";
