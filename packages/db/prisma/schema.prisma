@@ -30,12 +30,23 @@ model Website {
 }
 
 model Validator {
-  id        String            @id  @default(uuid())
-  publicKey String
-  location  String
-  ip        String
-  pendingPayouts  Int         @default(0)
-  ticks     WebsiteTick[]
+  id              String            @id  @default(uuid())
+  publicKey       String
+  location        String
+  ip              String
+  pendingPayouts  Int               @default(0)
+  ticks           WebsiteTick[]
+  lockedAmount    Int               @default(0)            
+  payout          Payout[]
+}
+
+model Payout {
+  id              String           @id @default(uuid())
+  validatorId     String
+  amount          Int
+  status          TxnStatus
+  signature       String
+  validator       Validator         @relation(fields: [validatorId], references: [id])
 }
 
 model WebsiteTick {
@@ -52,4 +63,10 @@ model WebsiteTick {
 enum WebsiteStatus {
   Good
   Bad
+}
+
+enum TxnStatus {
+  Processing
+  Sucess
+  Failed
 }
